@@ -12,6 +12,8 @@ Run gtfs-reader. If you are on Windows, double-click the executable.
 
 If you are on Linux, open a terminal where the app is and run `./gtfs-reader`.
 
+Upon launching, you will be given a list of routes available. Select one by typing in the index number (leftmost number)
+
 Afterward, all variants of the route will be given as .osm files in `/out`.
 
 My recommendation is to open it in JOSM as a separate layer to compare existing routes with GTFS.

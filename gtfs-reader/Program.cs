@@ -113,11 +113,13 @@ foreach (var utrip in unique_trips)
         xmlwriter.WriteEndElement();
     }
 
+    List<int> path = new List<int>();
     Shapes[] tripShape = shapes.Where(x => x.shape_id == utrip.shape_id).OrderBy(x => x.shape_pt_sequence).ToArray();
     for (int i = 0; i < tripShape.Length; i++)
     {
         xmlwriter.WriteStartElement("node");
         xmlwriter.WriteAttributeString("id",$"{idval}");
+        path.Add(idval);
         idval--;
         xmlwriter.WriteAttributeString("action","modify");
         xmlwriter.WriteAttributeString("visible","true");
@@ -127,14 +129,14 @@ foreach (var utrip in unique_trips)
     }
     
     xmlwriter.WriteStartElement("way");
-    xmlwriter.WriteAttributeString("id",$"-{utrip.shape_id}");
+    xmlwriter.WriteAttributeString("id",$"{idval}");
+    idval--;
     xmlwriter.WriteAttributeString("action","modify");
     xmlwriter.WriteAttributeString("visible","true");
     for (int i = 0; i < tripShape.Length; i++)
     {
         xmlwriter.WriteStartElement("nd");
-        xmlwriter.WriteAttributeString("ref", $"{idval}");
-        idval--;
+        xmlwriter.WriteAttributeString("ref", $"{path[i]}");
         xmlwriter.WriteEndElement();
     }
     xmlwriter.WriteEndElement();
