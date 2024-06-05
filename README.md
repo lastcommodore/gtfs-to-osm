@@ -2,6 +2,12 @@
 
 Converts a gtfs schedule feed into .osm files.
 
+The .osm files contain an empty way of the route, + all stops and their names.
+
+Each different variant of a route is exported as its own .osm file.
+
+Direction of travel follows the direction of the way.
+
 Please note this was coded in an afternoon by me, with no prior knowledge of gtfs. The code is not great. But it works.
 
 ## Usage
