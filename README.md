@@ -2,6 +2,8 @@
 
 Converts a gtfs schedule feed into .osm files.
 
+Please note this was coded in an afternoon by me, with no prior knowledge of gtfs. The code is not great. But it works.
+
 ## Usage
 
 Requires [.NET 7.0 to run.](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
@@ -25,3 +27,5 @@ Install [.NET SDK 7.0.](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 Clone the repo, and inside the repo run `dotnet build --configuration Release gtfs-reader.sln`
 
 Navigate to `bin/Release/net7.0`, and create two folders `gtfs` and `out`.
+
+Proceed to Usage for further use.
