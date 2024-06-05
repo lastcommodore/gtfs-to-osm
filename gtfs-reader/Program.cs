@@ -101,6 +101,11 @@ foreach (var utrip in unique_trips)
         xmlwriter.WriteEndElement();
         
         xmlwriter.WriteStartElement("tag");
+        xmlwriter.WriteAttributeString("k","public_transport");
+        xmlwriter.WriteAttributeString("v","platform");
+        xmlwriter.WriteEndElement();
+        
+        xmlwriter.WriteStartElement("tag");
         xmlwriter.WriteAttributeString("k","name");
         xmlwriter.WriteAttributeString("v",stop.stop_name);
         xmlwriter.WriteEndElement();
