@@ -78,7 +78,7 @@ int idval = -1;
 // for each unique trip, write out a new osm file w info
 foreach (var utrip in unique_trips)
 {
-    XmlWriter xmlwriter = XmlWriter.Create($"out/{route.route_short_name} - {route.route_long_name} - {utrip.trip_id}.osm", settings);
+    XmlWriter xmlwriter = XmlWriter.Create($"out/{route.route_short_name} - {route.route_long_name} - tripid:{utrip.trip_id} - shapeid:{utrip.shape_id} - routeid:{route.route_id}.osm", settings);
 
     xmlwriter.WriteStartElement("osm");
     xmlwriter.WriteAttributeString("version","0.6");
@@ -109,6 +109,10 @@ foreach (var utrip in unique_trips)
         xmlwriter.WriteAttributeString("k","name");
         xmlwriter.WriteAttributeString("v",stop.stop_name);
         xmlwriter.WriteEndElement();
+
+        xmlwriter.WriteKeyValPair("gtfs:stop_id", stop.stop_id);
+        if(stop.stop_code != "")
+            xmlwriter.WriteKeyValPair("gtfs:stop_code", stop.stop_code);
         
         xmlwriter.WriteEndElement();
     }
@@ -139,9 +143,21 @@ foreach (var utrip in unique_trips)
         xmlwriter.WriteAttributeString("ref", $"{path[i]}");
         xmlwriter.WriteEndElement();
     }
+    xmlwriter.WriteKeyValPair("colour", $"#{route.route_color}");
     xmlwriter.WriteEndElement();
     
     xmlwriter.WriteEndElement();
 
     xmlwriter.Flush();
+}
+
+public static class extensions
+{
+    public static void WriteKeyValPair(this XmlWriter xmlwriter, string key, string val)
+    {
+        xmlwriter.WriteStartElement("tag");
+        xmlwriter.WriteAttributeString("k",key);
+        xmlwriter.WriteAttributeString("v",val);
+        xmlwriter.WriteEndElement();
+    }
 }
