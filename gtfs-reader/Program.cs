@@ -1,5 +1,6 @@
 ﻿
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Xml;
 using CsvHelper;
 using gtfs_reader;
@@ -14,6 +15,12 @@ for (int i = 0; i < routes.Length; i++)
 
 var input = Console.ReadLine();
 Routes route = routes[int.Parse(input)];
+
+
+Console.Write("Expand stop names? (Ave -> Avenue, etc) [y/n] ");
+input = Console.ReadLine();
+
+bool expandNames = (input == "y");
 
 
 // read in trips
@@ -104,15 +111,16 @@ foreach (var utrip in unique_trips)
         xmlwriter.WriteAttributeString("k","public_transport");
         xmlwriter.WriteAttributeString("v","platform");
         xmlwriter.WriteEndElement();
+
+        string name = stop.stop_name;
+        if (expandNames)
+            name = stop.stop_name.expandName();
         
-        xmlwriter.WriteStartElement("tag");
-        xmlwriter.WriteAttributeString("k","name");
-        xmlwriter.WriteAttributeString("v",stop.stop_name);
-        xmlwriter.WriteEndElement();
+        xmlwriter.WriteKeyValPair("name", name);
 
         xmlwriter.WriteKeyValPair("gtfs:stop_id", stop.stop_id);
         if(stop.stop_code != "")
-            xmlwriter.WriteKeyValPair("gtfs:stop_code", stop.stop_code);
+            xmlwriter.WriteKeyValPair("ref", stop.stop_code);
         
         xmlwriter.WriteEndElement();
     }
@@ -151,6 +159,9 @@ foreach (var utrip in unique_trips)
     xmlwriter.Flush();
 }
 
+
+
+
 public static class extensions
 {
     public static void WriteKeyValPair(this XmlWriter xmlwriter, string key, string val)
@@ -160,4 +171,38 @@ public static class extensions
         xmlwriter.WriteAttributeString("v",val);
         xmlwriter.WriteEndElement();
     }
+    
+    static string[] expandPairs =
+    {
+        "Ave", "Avenue",
+        "Rd", "Road",
+        "Blvd", "Boulevard",
+        "St", "Street",
+        "Dr", "Drive",
+        "Cir", "Circle",
+        "Pl", "Place",
+        "Pky", "Parkway",
+        "Crt", "Court",
+        "Cres", "Crescent"
+    };
+
+    public static string expandName(this string name)
+    {
+        string expanded = name;
+        for (int i = 0; i < expandPairs.Length; i += 2)
+        {
+            expanded = expanded.ReplaceWholeWord(expandPairs[i], expandPairs[i + 1]);
+            expanded = expanded.ReplaceWholeWord(expandPairs[i].ToLower(), expandPairs[i + 1].ToLower());
+        }
+        
+        return expanded;
+    }
+    static public string ReplaceWholeWord(this string original, string wordToFind, string replacement, RegexOptions regexOptions = RegexOptions.None)
+    {
+        string pattern = String.Format(@"\b{0}\b", wordToFind);
+        string ret=Regex.Replace(original, pattern, replacement, regexOptions);
+        return ret;
+    }
+
+    
 }
